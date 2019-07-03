@@ -1,12 +1,11 @@
-use crate::diesel::{query_dsl::RunQueryDsl, Insertable, Queryable};
+use crate::diesel::{query_dsl::RunQueryDsl, QueryDsl, ExpressionMethods, Insertable, Queryable, MysqlConnection};
 use crate::serde::{Deserialize, Serialize};
 
 mod schema;
 use schema::todos;
 use schema::todos::dsl::*;
 
-
-#[derive(Queryable, Insertable, Deserialize, Serialize)]
+#[derive(Queryable, Insertable, Deserialize, Serialize, Debug)]
 #[table_name = "todos"]
 pub struct Todo {
     id: Option<i32>,
@@ -15,20 +14,14 @@ pub struct Todo {
 }
 
 impl Todo {
-    pub fn create(_name: String, connection: &diesel::MysqlConnection) -> Todo {
-        let t = Todo {
-            id: None,
-            name: _name,
-            is_checked: false,
-        };
-
+    pub fn create(&self, connection: &MysqlConnection) {
         diesel::insert_into(todos)
-            .values(&t)
+            .values(self)
             .execute(connection)
             .unwrap();
-
-        t
     }
 
-    // pub fn read_all();
+    pub fn read_all(connection: &MysqlConnection) -> Vec<Todo> {
+        todos::table.order(todos::id.asc()).load::<Todo>(connection).unwrap()
+    }
 }

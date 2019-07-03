@@ -1,0 +1,10 @@
+[package]
+name = "back-rocket"
+version = "0.1.0"
+authors = ["Olivier Lemoine <olivier@le-moine.fr>"]
+edition = "2018"
+
+[dependencies]
+diesel = { version = "1.0.0", features = ["mysql"] }
+rocket = "0.4.2"
+rocket_contrib = "0.4.2"

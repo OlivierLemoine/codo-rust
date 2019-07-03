@@ -7,7 +7,7 @@ mod schema;
 use schema::todos;
 use schema::todos::dsl::*;
 
-#[derive(Queryable, Insertable, Deserialize, Serialize, Debug)]
+#[derive(Queryable, Insertable, Deserialize, Serialize, Debug, AsChangeset)]
 #[table_name = "todos"]
 pub struct Todo {
     id: Option<i32>,
@@ -21,6 +21,10 @@ impl Todo {
             .values(self)
             .execute(connection)
             .unwrap();
+    }
+
+    pub fn update(&self, _id: i32, connection: &MysqlConnection) {
+        diesel::update(todos::table.find(_id)).set(self).execute(connection).unwrap();
     }
 
     pub fn read_all(connection: &MysqlConnection) -> Vec<Todo> {

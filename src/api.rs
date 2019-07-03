@@ -1,4 +1,3 @@
-use crate::diesel::MysqlConnection;
 use crate::rocket::State;
 use crate::rocket_contrib::json;
 use crate::todos::Todo;

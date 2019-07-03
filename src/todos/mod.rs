@@ -1,4 +1,6 @@
-use crate::diesel::{query_dsl::RunQueryDsl, QueryDsl, ExpressionMethods, Insertable, Queryable, MysqlConnection};
+use crate::diesel::{
+    query_dsl::RunQueryDsl, ExpressionMethods, Insertable, MysqlConnection, QueryDsl, Queryable,
+};
 use crate::serde::{Deserialize, Serialize};
 
 mod schema;
@@ -22,6 +24,15 @@ impl Todo {
     }
 
     pub fn read_all(connection: &MysqlConnection) -> Vec<Todo> {
-        todos::table.order(todos::id.asc()).load::<Todo>(connection).unwrap()
+        todos::table
+            .order(todos::id.asc())
+            .load::<Todo>(connection)
+            .unwrap()
+    }
+
+    pub fn delete(_id: i32, connection: &MysqlConnection) {
+        diesel::delete(todos::table.find(_id))
+            .execute(connection)
+            .unwrap();
     }
 }

@@ -11,21 +11,56 @@ export class Todo {
     }
 }
 
-export default class {
+export default class Todos {
     /**
      * @param {HTMLElement} entryPoint
+     * @param {HTMLTemplateElement} template
      */
-    constructor(entryPoint) {
+    constructor(entryPoint, template) {
         this.base = entryPoint;
+        this.template = template.content;
+        /** @type {Todo[]} */
+        this.todos = [];
     }
 
     /**
-     * @param {Todo[]} todos
+     * @param {number} id
      */
-    render(todos) {
-        this.base.childNodes.forEach(v => v.remove());
-        todos.forEach(v => {
-            this.base.append(v.name);
+    async delete(id) {
+        await fetch(`/api/todo/${id}`, {
+            method: 'DELETE',
         });
+        await this.fetch_all();
+        this.render();
+    }
+
+    /**
+     * @param {Todo} t
+     */
+    add_todo_callback(t) {
+        this.todos.push(t);
+        this.render();
+    }
+
+    async fetch_all() {
+        let res = await fetch('/api/todos');
+        let json = await res.json();
+        this.todos = json;
+    }
+
+    render() {
+        this.base.childNodes.forEach(v => v.remove());
+        let base = document.createElement('ul');
+        this.todos.forEach(v => {
+            let todo = this.template.cloneNode(true);
+            //@ts-ignore
+            todo.querySelector('.todo-name').innerText = v.name;
+            //@ts-ignore
+            todo.querySelector('.todo-delete').addEventListener('click', () => {
+                this.delete(v.id);
+            });
+            base.append(todo);
+        });
+        this.base.append(base);
     }
 }

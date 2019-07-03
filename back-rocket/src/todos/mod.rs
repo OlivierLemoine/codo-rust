@@ -1,10 +1,12 @@
+use crate::diesel::{query_dsl::RunQueryDsl, Insertable, Queryable};
+use crate::serde::{Deserialize, Serialize};
+
 mod schema;
 use schema::todos;
 use schema::todos::dsl::*;
 
-use diesel::{query_dsl::RunQueryDsl, Insertable, Queryable};
 
-#[derive(Queryable, Insertable)]
+#[derive(Queryable, Insertable, Deserialize, Serialize)]
 #[table_name = "todos"]
 pub struct Todo {
     id: Option<i32>,

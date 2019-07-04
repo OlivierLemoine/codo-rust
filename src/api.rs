@@ -3,8 +3,6 @@ use crate::rocket_contrib::json;
 use crate::todos::{MaybeTodo, Todo};
 use crate::Connection;
 
-use std::ops::Deref;
-
 #[get("/todos")]
 pub fn get_todos(connection: State<Connection>) -> json::JsonValue {
     let conn = connection.lock().unwrap();

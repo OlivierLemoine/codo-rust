@@ -45,3 +45,17 @@ Contrairement à Go, pas de garbage collector. À la place, des règles stricts 
 -   Lifespan :
 
 ## Macro
+
+```rust
+macro!()
+macro!{}
+macro![]
+```
+
+```rust
+#[macro]
+#[macro(params)]
+#[Derive(auto-deriving traits)]
+```
+
+#

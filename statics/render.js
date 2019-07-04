@@ -25,20 +25,28 @@ export default class Todos {
 
     /**
      * @param {number} id
+     * @param {boolean} checked
+     */
+    async change_checked(id, checked) {
+        await fetch(`/api/todo/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ is_checked: checked }),
+        });
+        await this.update_todos();
+    }
+
+    /**
+     * @param {number} id
      */
     async delete(id) {
         await fetch(`/api/todo/${id}`, {
             method: 'DELETE',
         });
-        await this.fetch_all();
-        this.render();
+        await this.update_todos();
     }
 
-    /**
-     * @param {Todo} t
-     */
-    add_todo_callback(t) {
-        this.todos.push(t);
+    async update_todos() {
+        await this.fetch_all();
         this.render();
     }
 
@@ -54,10 +62,20 @@ export default class Todos {
         this.todos.forEach(v => {
             let todo = this.template.cloneNode(true);
             //@ts-ignore
-            todo.querySelector('.todo-name').innerText = v.name;
+            let name = todo.querySelector('.todo-name');
+            if (v.is_checked) {
+                name.classList.add('todo-done');
+            }
+            name.innerText = v.name;
             //@ts-ignore
             todo.querySelector('.todo-delete').addEventListener('click', () => {
                 this.delete(v.id);
+            });
+            //@ts-ignore
+            let checked = todo.querySelector('.todo-checked');
+            checked.checked = v.is_checked;
+            checked.addEventListener('click', e => {
+                this.change_checked(v.id, e.target.checked);
             });
             base.append(todo);
         });

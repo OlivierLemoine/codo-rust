@@ -7,6 +7,12 @@ mod schema;
 use schema::todos;
 use schema::todos::dsl::*;
 
+#[derive(Deserialize, Clone)]
+pub struct MaybeTodo {
+    name: Option<String>,
+    is_checked: Option<bool>,
+}
+
 #[derive(Queryable, Insertable, Deserialize, Serialize, Debug, AsChangeset)]
 #[table_name = "todos"]
 pub struct Todo {
@@ -24,10 +30,21 @@ impl Todo {
     }
 
     pub fn update(&self, _id: i32, connection: &MysqlConnection) {
-        diesel::update(todos::table.find(_id)).set(self).execute(connection).unwrap();
+        diesel::update(todos::table.find(_id))
+            .set(self)
+            .execute(connection)
+            .unwrap();
     }
 
-    pub fn read_all(connection: &MysqlConnection) -> Vec<Todo> {
+    pub fn patch(_id: i32, mt: MaybeTodo, connection: &MysqlConnection) {
+        let mut tmp_todos: Vec<Todo> = todos::table.find(_id).load::<Todo>(connection).unwrap();
+        if let Some(todo) = tmp_todos.first_mut() {
+            todo.patch_from(mt);
+            todo.update(_id, connection);
+        }
+    }
+
+    pub fn get_all(connection: &MysqlConnection) -> Vec<Todo> {
         todos::table
             .order(todos::id.asc())
             .load::<Todo>(connection)
@@ -38,5 +55,14 @@ impl Todo {
         diesel::delete(todos::table.find(_id))
             .execute(connection)
             .unwrap();
+    }
+
+    fn patch_from(&mut self, mt: MaybeTodo) {
+        if let Some(_name) = mt.name {
+            self.name = _name;
+        }
+        if let Some(_is_checked) = mt.is_checked {
+            self.is_checked = _is_checked;
+        }
     }
 }

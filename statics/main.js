@@ -3,8 +3,7 @@ import Todos from './render.js';
 let newTodoInput = document.getElementById('new-todo-name');
 
 (async () => {
-    let base = document.createElement('div');
-    document.body.append(base);
+    let base = document.getElementById('todos-container');
     let todos = new Todos(base, document.querySelector('#todo-template'));
     await todos.fetch_all();
     todos.render();
@@ -17,12 +16,11 @@ let newTodoInput = document.getElementById('new-todo-name');
                 let name = e.target.value;
                 //@ts-ignore
                 e.target.value = '';
-                let res = await fetch('/api/todo', {
+                await fetch('/api/todo', {
                     method: 'POST',
                     body: JSON.stringify({ name: name, is_checked: false }),
                 });
-                let json = await res.json();
-                todos.add_todo_callback(json);
+                todos.update_todos();
             }
         }
     });

@@ -4,17 +4,45 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>Document</title>
+        <link rel="stylesheet" href="materialize.css" />
+        <title>Todo List</title>
+        <style>
+            .todo-element {
+                border-top: 1px solid rgba(0, 0, 0, 0.425);
+                padding: 15px;
+            }
+
+            .todo-done {
+                text-decoration: line-through;
+                color: rgba(0, 0, 0, 0.39);
+            }
+        </style>
     </head>
     <body>
         <template id="todo-template">
-            <li>
-                <p class="todo-name"></p>
-                <button class="todo-delete">Delete</button>
+            <li class="todo-element">
+                <label>
+                    <input class="todo-checked filled-in" type="checkbox" />
+                    <span style="top: 8px;"></span>
+                </label>
+                <span class="todo-name" style="font-size: 20px;"></span>
+                <div class="right-align" style="float: right;">
+                    <button class="todo-delete btn">Delete</button>
+                </div>
             </li>
         </template>
-        Index !
-        <input id="new-todo-name" type="text" />
+        <h1 style="text-align: center;">Todo list</h1>
+        <div class="row">
+            <div class="col s1 m2 l3"></div>
+            <div class="col s10 m8 l6">
+                <div class="card">
+                    <div style="padding: 50px;">
+                        <input id="new-todo-name" type="text" />
+                    </div>
+                    <div id="todos-container"></div>
+                </div>
+            </div>
+        </div>
         <script src="main.js" type="module"></script>
     </body>
 </html>

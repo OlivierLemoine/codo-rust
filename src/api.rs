@@ -1,35 +1,34 @@
+use crate::moc_bdd::Todos;
 use crate::rocket::State;
 use crate::rocket_contrib::json;
-// use crate::todos::{MaybeTodo, Todo};
+use crate::todo::{MaybeTodo, Todo};
 
 #[get("/todos")]
-pub fn get_todos() -> json::JsonValue {
-    // json! {Todo::get_all(&conn)}
-    json! {
-        vec![]
-    }
+pub fn get_todos(todos: State<Todos>) -> json::JsonValue {
+    json! { todos.get_all() }
 }
 
 #[post("/todo", data = "<todo>")]
-pub fn create_todo(todo: json::Json<Todo>) {
+pub fn create_todo(todo: json::Json<Todo>, todos: State<Todos>) {
+    todos.insert_into(todo.into_inner());
 }
 
 #[put("/todo/<id>", data = "<todo>")]
-pub fn update_todo(id: i32, todo: json::Json<Todo>) {
-    let conn = connection.lock().unwrap();
-    todo.update(id, &conn);
+pub fn update_todo(id: i32, todo: json::Json<Todo>, todos: State<Todos>) {
+    todos.update(todo.into_inner());
 }
 
 #[patch("/todo/<id>", data = "<maybe_todo>")]
-pub fn patch_todo(id: i32, maybe_todo: json::Json<MaybeTodo>) {
-    let conn = connection.lock().unwrap();
-    Todo::patch(id, maybe_todo.clone(), &conn);
+pub fn patch_todo(id: i32, maybe_todo: json::Json<MaybeTodo>, todos: State<Todos>) {
+    if let Some(mut todo) = todos.get(id) {
+        todo.merge(maybe_todo.into_inner());
+        todos.update(todo);
+    }
 }
 
 #[delete("/todo/<id>")]
-pub fn delete_todo(id: i32) {
-    let conn = connection.lock().unwrap();
-    Todo::delete(id, &conn);
+pub fn delete_todo(id: i32, todos: State<Todos>) {
+    todos.delete(id);
 }
 
 pub fn get_api_routes() -> Vec<rocket::Route> {

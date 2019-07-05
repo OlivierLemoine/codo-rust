@@ -9,7 +9,7 @@ use rocket::response::NamedFile;
 use rocket_contrib::serve::StaticFiles;
 use std::io;
 
-// mod api;
+mod api;
 mod moc_bdd;
 mod todo;
 
@@ -23,6 +23,6 @@ fn main() {
         .manage(moc_bdd::Todos::init())
         .mount("/", routes![index])
         .mount("/", StaticFiles::from("statics"))
-        // .mount("/api", api::get_api_routes())
+        .mount("/api", api::get_api_routes())
         .launch();
 }

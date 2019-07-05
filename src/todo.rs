@@ -12,3 +12,15 @@ pub struct Todo {
     pub name: String,
     pub is_checked: bool,
 }
+
+impl Todo {
+    pub fn merge(&mut self, t: MaybeTodo) {
+        let MaybeTodo { name, is_checked } = t;
+        if let Some(name) = name {
+            self.name = name;
+        }
+        if let Some(is_checked) = is_checked {
+            self.is_checked = is_checked;
+        }
+    }
+}

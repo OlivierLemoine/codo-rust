@@ -1,6 +1,3 @@
-use crate::diesel::{
-    query_dsl::RunQueryDsl, ExpressionMethods, Insertable, MysqlConnection, QueryDsl, Queryable,
-};
 use crate::serde::{Deserialize, Serialize};
 
 mod schema;
@@ -13,8 +10,7 @@ pub struct MaybeTodo {
     is_checked: Option<bool>,
 }
 
-#[derive(Queryable, Insertable, Deserialize, Serialize, Debug, AsChangeset)]
-#[table_name = "todos"]
+#[derive(Deserialize, Serialize, Debug, AsChangeset)]
 pub struct Todo {
     id: Option<i32>,
     name: String,

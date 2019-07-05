@@ -1,4 +1,5 @@
 use crate::todo;
+use std::sync::Mutex;
 
 #[derive(Clone)]
 struct MocTodo {
@@ -22,21 +23,22 @@ impl Into<todo::Todo> for MocTodo {
     }
 }
 
-pub struct Todos(Vec<MocTodo>);
+pub struct Todos(Mutex<Vec<MocTodo>>);
 
 impl Todos {
     pub fn init() -> Todos {
-        Todos(vec![])
+        Todos(vec![].into())
     }
 
     pub fn insert_into(&mut self, todo: todo::Todo) -> todo::Todo {
+        let mut vec = self.0.lock().unwrap();
         let todo::Todo {
             id: _,
             name,
             is_checked,
         } = todo;
 
-        let index = self.0.len();
+        let index = vec.len();
 
         let new_todo = MocTodo {
             id: index,
@@ -44,7 +46,7 @@ impl Todos {
             is_checked,
         };
 
-        self.0.push(new_todo);
+        vec.push(new_todo);
 
         todo::Todo {
             id: Some(index as i32),
@@ -54,6 +56,33 @@ impl Todos {
     }
 
     pub fn get_all(&self) -> Vec<todo::Todo> {
-        self.0.iter().map(|e| e.clone().into()).collect()
+        let vec = self.0.lock().unwrap();
+        vec.iter().map(|e| e.clone().into()).collect()
+    }
+
+    pub fn update(&mut self, todo: todo::Todo) -> todo::Todo {
+        let mut vec = self.0.lock().unwrap();
+        let todo::Todo {
+            id,
+            name,
+            is_checked,
+        } = todo;
+
+        let index = id.expect("An ID is required in order to update a todo") as usize;
+
+        let mut value = &vec[index];
+        // vec.
+
+        value = MocTodo{
+            id: index,
+            name: name.clone(),
+            is_checked,
+        };
+
+        todo::Todo {
+            id,
+            name,
+            is_checked,
+        }
     }
 }

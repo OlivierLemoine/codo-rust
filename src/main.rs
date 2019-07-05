@@ -20,7 +20,7 @@ fn index() -> io::Result<rocket::response::NamedFile> {
 
 fn main() {
     rocket::ignite()
-        .manage()
+        .manage(moc_bdd::Todos::init())
         .mount("/", routes![index])
         .mount("/", StaticFiles::from("statics"))
         // .mount("/api", api::get_api_routes())

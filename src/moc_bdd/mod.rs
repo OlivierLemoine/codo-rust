@@ -70,10 +70,7 @@ impl Todos {
 
         let index = id.expect("An ID is required in order to update a todo") as usize;
 
-        let mut value = &vec[index];
-        // vec.
-
-        value = MocTodo{
+        vec[index] = MocTodo {
             id: index,
             name: name.clone(),
             is_checked,
@@ -84,5 +81,10 @@ impl Todos {
             name,
             is_checked,
         }
+    }
+
+    pub fn delete(&mut self, i: i32) {
+        let mut vec = self.0.lock().unwrap();
+        vec.remove(i as usize);
     }
 }

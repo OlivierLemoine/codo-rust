@@ -81,15 +81,15 @@ impl Todos {
         todos.todos.iter().map(|e| e.clone().into()).collect()
     }
 
-    pub fn update(&self, todo: todo::Todo) -> todo::Todo {
+    pub fn update(&self, id: i32, todo: todo::Todo) -> todo::Todo {
         let mut todos = self.0.lock().unwrap();
         let todo::Todo {
-            id,
+            id: _,
             name,
             is_checked,
         } = todo;
 
-        let index = id.expect("An ID is required in order to update a todo") as usize;
+        let index = id as usize;
 
         let pos = todos.todos.iter().position(|e| e.id == index).unwrap();
 
@@ -100,7 +100,7 @@ impl Todos {
         };
 
         todo::Todo {
-            id,
+            id: Some(id),
             name,
             is_checked,
         }

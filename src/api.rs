@@ -15,14 +15,14 @@ pub fn create_todo(todo: json::Json<Todo>, todos: State<Todos>) {
 
 #[put("/todo/<id>", data = "<todo>")]
 pub fn update_todo(id: i32, todo: json::Json<Todo>, todos: State<Todos>) {
-    todos.update(todo.into_inner());
+    todos.update(id, todo.into_inner());
 }
 
 #[patch("/todo/<id>", data = "<maybe_todo>")]
 pub fn patch_todo(id: i32, maybe_todo: json::Json<MaybeTodo>, todos: State<Todos>) {
     if let Some(mut todo) = todos.get(id) {
         todo.merge(maybe_todo.into_inner());
-        todos.update(todo);
+        todos.update(id, todo);
     }
 }
 
